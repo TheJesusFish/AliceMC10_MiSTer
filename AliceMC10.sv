@@ -158,7 +158,16 @@ assign {SDRAM_DQ, SDRAM_A, SDRAM_BA, SDRAM_CLK, SDRAM_CKE, SDRAM_DQML, SDRAM_DQM
 assign {DDRAM_CLK, DDRAM_BURSTCNT, DDRAM_ADDR, DDRAM_DIN, DDRAM_BE, DDRAM_RD, DDRAM_WE} = '0;
 
 assign VGA_SL = 0;
+<<<<<<< Updated upstream
 assign VGA_F1 = 0;
+=======
+assign VGA_F1 = 1'b0;
+assign VGA_SCALER  = 0;
+assign VGA_DISABLE = 0;
+assign HDMI_FREEZE = 0;
+assign HDMI_BLACKOUT = 0;
+assign HDMI_BOB_DEINT = 0;
+>>>>>>> Stashed changes
 
 assign AUDIO_S = 0;
 assign AUDIO_MIX = 0;
@@ -371,11 +380,16 @@ mc10 mc10
 
 assign AUDIO_L = { audio, audio, 3'd0, tape_audio, 10'd0 };
 assign AUDIO_R = { audio, audio, 3'd0, tape_audio, 10'd0 };
-assign CE_PIXEL = ce_pix;
+
+reg [2:0] ce_div = 0;
+always @(posedge clk_sys) ce_div <= ce_div + 1;
+
 assign CLK_VIDEO = clk_sys;
-assign VGA_DE = ~(hblank | vblank);
+assign CE_PIXEL = (ce_div == 0);  // 50MHz / 8 = 6.25MHz
+
 assign VGA_HS = hsync;
-assign VGA_VS = vsync;
+assign VGA_VS = vsync; 
+assign VGA_DE = ~(hblank | vblank);
 assign VGA_R = mc10_red | ov_red;
 
 wire [24:0] sdram_addr;
